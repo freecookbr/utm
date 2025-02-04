@@ -13,8 +13,8 @@ function App() {
   const [utmParams, setUtmParams] = useState<UTMParams>({
     utm_source: UTM_OPTIONS.utm_source[0],
     utm_medium: UTM_OPTIONS.utm_medium[0],
-    utm_campaign: UTM_OPTIONS.utm_campaign[0],
-    utm_content: UTM_OPTIONS.utm_content[0]
+    utm_campaign: '',
+    utm_content: ''
   });
 
   useEffect(() => {
@@ -64,9 +64,37 @@ function App() {
     setUtmParams({
       utm_source: UTM_OPTIONS.utm_source[0],
       utm_medium: UTM_OPTIONS.utm_medium[0],
-      utm_campaign: UTM_OPTIONS.utm_campaign[0],
-      utm_content: UTM_OPTIONS.utm_content[0]
+      utm_campaign: '',
+      utm_content: ''
     });
+  };
+
+  const renderField = (param: keyof UTMParams) => {
+    if (param === 'utm_source' || param === 'utm_medium') {
+      return (
+        <select
+          value={utmParams[param]}
+          onChange={(e) => handleParamChange(param, e.target.value)}
+          className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[7px]"
+        >
+          {UTM_OPTIONS[param].map((option) => (
+            <option key={option} value={option}>
+              {option.replace(/_/g, ' ')}
+            </option>
+          ))}
+        </select>
+      );
+    }
+    
+    return (
+      <input
+        type="text"
+        value={utmParams[param]}
+        onChange={(e) => handleParamChange(param, e.target.value)}
+        placeholder={`Digite o ${param.replace('utm_', '').replace('_', ' ')}`}
+        className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[7px]"
+      />
+    );
   };
 
   return (
@@ -103,17 +131,7 @@ function App() {
                 <label className="block text-sm font-medium text-gray-700">
                   {param.replace('utm_', '').toUpperCase()}
                 </label>
-                <select
-                  value={utmParams[param as keyof UTMParams]}
-                  onChange={(e) => handleParamChange(param as keyof UTMParams, e.target.value)}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-[7px]"
-                >
-                  {UTM_OPTIONS[param].map((option) => (
-                    <option key={option} value={option}>
-                      {option.replace(/_/g, ' ')}
-                    </option>
-                  ))}
-                </select>
+                {renderField(param as keyof UTMParams)}
               </div>
             ))}
           </div>
